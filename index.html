@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechWorld - Electronics & Gadgets | Internship Task WD-EC-003</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark-blue': '#0A2647',
+                        'tech-blue': '#00B4D8',
+                        'tech-light-blue': '#90E0EF',
+                        'bg-soft': '#F0F4F8',
+                        'navy-dark': '#05182e',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar and modal styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00B4D8;
+            border-radius: 4px;
+        }
+        .tab-active {
+            border-bottom: 3px solid #00B4D8;
+            color: #00B4D8;
+            font-weight: 600;
+        }
+        .product-card:hover .product-img {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-bg-soft text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-dark-blue text-xs text-slate-300 py-1.5 px-4 text-center border-b border-slate-700/50 flex justify-between items-center max-w-full">
+        <div class="hidden md:flex items-center space-x-4">
+            <span><i class="fas font-solid fa-truck-fast text-tech-blue mr-1"></i> Free Shipping on orders over $50</span>
+            <span><i class="fas fa-shield-alt text-tech-blue mr-1"></i> 2-Year Official TechWorld Warranty</span>
+        </div>
+        <div class="mx-auto md:mx-0 text-center w-full md:w-auto flex justify-between md:justify-end items-center gap-4">
+            <span class="text-tech-light-blue font-semibold">Data Alcott Systems • Task WD-EC-003</span>
+            <div id="auth-status-top" class="text-slate-300 cursor-pointer hover:text-white" onclick="switchTab('account')">
+                <i class="fas fa-user-circle mr-1"></i> <span id="top-user-name">Sign In</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Bar -->
+    <header class="sticky top-0 z-40 bg-dark-blue shadow-lg text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('home')">
+                    <div class="bg-tech-blue p-2.5 rounded-xl shadow-lg shadow-tech-blue/30 text-dark-blue font-bold text-xl">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    <div>
+                        <span class="text-2xl font-extrabold tracking-tight text-white">Tech<span class="text-tech-blue">World</span></span>
+                        <span class="block text-[10px] text-slate-400 font-medium tracking-widest uppercase -mt-1">Electronics & Gadgets</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Search Bar -->
+                <div class="hidden md:flex flex-1 max-w-md mx-8">
+                    <div class="relative w-full">
+                        <input type="text" id="desktop-search-input" onkeyup="handleSearchInput(event)" placeholder="Search iPhone, MacBook, Sony, Smartwatches..." class="w-full bg-slate-800 text-white placeholder-slate-400 text-sm rounded-full pl-4 pr-10 py-2.5 focus:outline-none focus:ring-2 focus:ring-tech-blue border border-slate-700">
+                        <button onclick="executeSearch('desktop-search-input')" class="absolute right-1 top-1/2 -translate-y-1/2 bg-tech-blue hover:bg-cyan-400 text-dark-blue p-2 rounded-full w-8 h-8 flex items-center justify-center transition">
+                            <i class="fas fa-search text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Icons & Quick Actions -->
+                <div class="flex items-center space-x-4 sm:space-x-6">
+                    <button onclick="switchTab('wishlist')" class="relative p-2 text-slate-300 hover:text-tech-blue transition" title="Wishlist">
+                        <i class="far fa-heart text-xl"></i>
+                        <span id="wishlist-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-dark-blue">0</span>
+                    </button>
+
+                    <button onclick="switchTab('cart')" class="relative p-2 text-slate-300 hover:text-tech-blue transition flex items-center" title="Cart">
+                        <i class="fas fa-shopping-bag text-xl"></i>
+                        <span id="cart-badge" class="absolute -top-1 -right-1 bg-tech-blue text-dark-blue font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-dark-blue">0</span>
+                        <span class="hidden lg:inline-block ml-2 text-xs font-semibold text-slate-200" id="cart-header-subtotal">$0.00</span>
+                    </button>
+
+                    <button onclick="switchTab('account')" class="p-2 text-slate-300 hover:text-tech-blue transition" title="User Account">
+                        <i class="far fa-user text-xl"></i>
+                    </button>
+
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="md:hidden p-2 text-slate-300 hover:text-white">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Search Bar -->
+            <div class="pb-3 md:hidden">
+                <div class="relative w-full">
+                    <input type="text" id="mobile-search-input" onkeyup="handleSearchInput(event)" placeholder="Search gadgets..." class="w-full bg-slate-800 text-white placeholder-slate-400 text-xs rounded-lg pl-3 pr-8 py-2 focus:outline-none border border-slate-700">
+                    <button onclick="executeSearch('mobile-search-input')" class="absolute right-2 top-1/2 -translate-y-1/2 text-tech-blue">
+                        <i class="fas fa-search text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Links Header Bar -->
+        <nav class="bg-navy-dark border-t border-slate-800 hidden md:block">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between text-sm">
+                <div class="flex space-x-8 py-3">
+                    <button onclick="switchTab('home')" class="nav-link text-slate-300 hover:text-tech-blue transition font-medium flex items-center gap-1.5"><i class="fas fa-house text-xs"></i> Home</button>
+                    <button onclick="filterCategoryAndNav('phones')" class="nav-link text-slate-300 hover:text-tech-blue transition font-medium flex items-center gap-1.5"><i class="fas fa-mobile-screen-button text-xs"></i> Smartphones</button>
+                    <button onclick="filterCategoryAndNav('laptops')" class="nav-link text-slate-300 hover:text-tech-blue transition font-medium flex items-center gap-1.5"><i class="fas fa-laptop text-xs"></i> Laptops & Tablets</button>
+                    <button onclick="filterCategoryAndNav('audio')" class="nav-link text-slate-300 hover:text-tech-blue transition font-medium flex items-center gap-1.5"><i class="fas fa-headphones text-xs"></i> Audio</button>
+                    <button onclick="filterCategoryAndNav('wearables')" class="nav-link text-slate-300 hover:text-tech-blue transition font-medium flex items-center gap-1.5"><i class="fas fa-stopwatch text-xs"></i> Wearables</button>
+                    <button onclick="filterCategoryAndNav('accessories')" class="nav-link text-slate-300 hover:text-tech-blue transition font-medium flex items-center gap-1.5"><i class="fas fa-plug text-xs"></i> Accessories</button>
+                    <button onclick="switchTab('products')" class="nav-link text-tech-blue hover:underline font-semibold">All Products</button>
+                </div>
+                <div class="flex space-x-6 text-xs text-slate-400">
+                    <button onclick="switchTab('about')" class="hover:text-white transition">About Us</button>
+                    <button onclick="switchTab('contact')" class="hover:text-white transition">Contact Us</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Mobile Drawer Navigation -->
+        <div id="mobile-drawer" class="hidden bg-dark-blue border-t border-slate-700 px-4 pt-2 pb-4 space-y-2 md:hidden">
+            <button onclick="switchTab('home'); toggleMobileMenu();" class="block w-full text-left py-2 text-slate-200 border-b border-slate-800"><i class="fas fa-home w-6 text-tech-blue"></i> Home</button>
+            <button onclick="filterCategoryAndNav('phones'); toggleMobileMenu();" class="block w-full text-left py-2 text-slate-200 border-b border-slate-800"><i class="fas fa-mobile-alt w-6 text-tech-blue"></i> Smartphones</button>
+            <button onclick="filterCategoryAndNav('laptops'); toggleMobileMenu();" class="block w-full text-left py-2 text-slate-200 border-b border-slate-800"><i class="fas fa-laptop w-6 text-tech-blue"></i> Laptops & Tablets</button>
+            <button onclick="filterCategoryAndNav('audio'); toggleMobileMenu();" class="block w-full text-left py-2 text-slate-200 border-b border-slate-800"><i class="fas fa-headphones w-6 text-tech-blue"></i> Audio & Speakers</button>
+            <button onclick="filterCategoryAndNav('wearables'); toggleMobileMenu();" class="block w-full text-left py-2 text-slate-200 border-b border-slate-800"><i class="fas fa-clock w-6 text-tech-blue"></i> Wearables</button>
+            <button onclick="filterCategoryAndNav('accessories'); toggleMobileMenu();" class="block w-full text-left py-2 text-slate-200 border-b border-slate-800"><i class="fas fa-plug w-6 text-tech-blue"></i> Accessories</button>
+            <button onclick="switchTab('about'); toggleMobileMenu();" class="block w-full text-left py-2 text-slate-300"><i class="fas fa-info-circle w-6 text-tech-blue"></i> About Us</button>
+            <button onclick="switchTab('contact'); toggleMobileMenu();" class="block w-full text-left py-2 text-slate-300"><i class="fas fa-envelope w-6 text-tech-blue"></i> Contact Us</button>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- Notification Toast Toast Container -->
+        <div id="toast" class="fixed bottom-5 right-5 z-50 bg-dark-blue text-white px-5 py-3.5 rounded-xl shadow-2xl border border-tech-blue/50 flex items-center space-x-3 transition-all transform translate-y-20 opacity-0 pointer-events-none">
+            <div id="toast-icon" class="text-tech-blue text-xl"><i class="fas fa-check-circle"></i></div>
+            <div id="toast-message" class="text-sm font-medium">Notification message</div>
+        </div>
+
+        <!-- ================= HOME SECTION ================= -->
+        <section id="section-home" class="space-y-12">
+            <!-- Hero Banner Slider -->
+            <div class="relative bg-gradient-to-r from-dark-blue via-navy-dark to-slate-900 rounded-3xl overflow-hidden shadow-2xl text-white p-8 md:p-12 border border-slate-800">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="space-y-6 z-10">
+                        <span class="inline-block bg-tech-blue/20 text-tech-blue border border-tech-blue/40 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Next-Gen Tech Arrival</span>
+                        <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+                            Experience Innovation with <span class="text-transparent bg-clip-text bg-gradient-to-r from-tech-blue to-teal-300">TechWorld</span>
+                        </h1>
+                        <p class="text-slate-300 text-sm md:text-base leading-relaxed">
+                            Discover cutting-edge smartphones, ultra-thin laptops, high-fidelity audio gear, and smart wearables with exclusive deals up to 30% off.
+                        </p>
+                        <div class="flex flex-wrap gap-4 pt-2">
+                            <button onclick="switchTab('products')" class="bg-tech-blue hover:bg-cyan-400 text-dark-blue font-bold px-7 py-3 rounded-xl shadow-lg shadow-tech-blue/30 transition transform hover:-translate-y-0.5">
+                                Shop Now <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                            <button onclick="filterCategoryAndNav('phones')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 font-semibold px-6 py-3 rounded-xl transition">
+                                View Flagships
+                            </button>
+                        </div>
+                    </div>
+                    <div class="relative flex justify-center items-center">
+                        <div class="absolute w-72 h-72 bg-tech-blue/20 rounded-full filter blur-3xl"></div>
+                        <img id="hero-img-display" src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80" alt="Hero Featured Product" class="relative z-10 w-full max-w-sm rounded-2xl shadow-2xl object-cover border border-slate-700/50 transform hover:scale-105 transition duration-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories Grid -->
+            <div>
+                <div class="flex justify-between items-end mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-dark-blue">Browse Product Categories</h2>
+                        <p class="text-sm text-slate-500">Explore top electronics carefully curated for work and play</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                    <!-- Category 1 -->
+                    <div onclick="filterCategoryAndNav('phones')" class="group cursor-pointer bg-white p-6 rounded-2xl shadow-sm hover:shadow-xl border border-slate-200 hover:border-tech-blue transition text-center flex flex-col items-center">
+                        <div class="w-16 h-16 rounded-full bg-blue-50 text-dark-blue group-hover:bg-tech-blue group-hover:text-dark-blue flex items-center justify-center text-2xl mb-4 transition">
+                            <i class="fas fa-mobile-screen-button"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800 group-hover:text-tech-blue transition">Smartphones</h3>
+                        <p class="text-xs text-slate-400 mt-1">iPhone, Galaxy, Pixel, OnePlus</p>
+                    </div>
+                    <!-- Category 2 -->
+                    <div onclick="filterCategoryAndNav('laptops')" class="group cursor-pointer bg-white p-6 rounded-2xl shadow-sm hover:shadow-xl border border-slate-200 hover:border-tech-blue transition text-center flex flex-col items-center">
+                        <div class="w-16 h-16 rounded-full bg-blue-50 text-dark-blue group-hover:bg-tech-blue group-hover:text-dark-blue flex items-center justify-center text-2xl mb-4 transition">
+                            <i class="fas fa-laptop"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800 group-hover:text-tech-blue transition">Laptops & Tablets</h3>
+                        <p class="text-xs text-slate-400 mt-1">MacBook, XPS, Spectre, iPad</p>
+                    </div>
+                    <!-- Category 3 -->
+                    <div onclick="filterCategoryAndNav('audio')" class="group cursor-pointer bg-white p-6 rounded-2xl shadow-sm hover:shadow-xl border border-slate-200 hover:border-tech-blue transition text-center flex flex-col items-center">
+                        <div class="w-16 h-16 rounded-full bg-blue-50 text-dark-blue group-hover:bg-tech-blue group-hover:text-dark-blue flex items-center justify-center text-2xl mb-4 transition">
+                            <i class="fas fa-headphones"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800 group-hover:text-tech-blue transition">Audio & Wearables</h3>
+                        <p class="text-xs text-slate-400 mt-1">Headphones, Earbuds, Watches</p>
+                    </div>
+                    <!-- Category 4 -->
+                    <div onclick="filterCategoryAndNav('accessories')" class="group cursor-pointer bg-white p-6 rounded-2xl shadow-sm hover:shadow-xl border border-slate-200 hover:border-tech-blue transition text-center flex flex-col items-center">
+                        <div class="w-16 h-16 rounded-full bg-blue-50 text-dark-blue group-hover:bg-tech-blue group-hover:text-dark-blue flex items-center justify-center text-2xl mb-4 transition">
+                            <i class="fas fa-plug"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800 group-hover:text-tech-blue transition">Accessories</h3>
+                        <p class="text-xs text-slate-400 mt-1">Chargers, Power Banks, Cases</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured / Trending Products -->
+            <div>
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-dark-blue">Trending Tech Gadgets</h2>
+                        <p class="text-sm text-slate-500">Hand-picked bestsellers with top customer ratings</p>
+                    </div>
+                    <button onclick="switchTab('products')" class="text-tech-blue font-semibold hover:underline text-sm flex items-center gap-1">
+                        View All <i class="fas fa-chevron-right text-xs"></i>
+                    </button>
+                </div>
+                <div id="home-featured-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Dynamic Featured Items Loaded Here -->
+                </div>
+            </div>
+
+            <!-- Promotional Highlight Section -->
+            <div class="bg-gradient-to-r from-tech-blue to-dark-blue rounded-3xl p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="space-y-2">
+                    <span class="bg-white/20 text-xs px-3 py-1 rounded-full uppercase font-bold tracking-wider">Limited Time Promo</span>
+                    <h3 class="text-2xl font-extrabold">Upgrade Your Workstation Today</h3>
+                    <p class="text-slate-100 text-sm max-w-xl">Get instant $100 off when bundling any flagship laptop with active noise cancelling headphones. Use promo code <span class="bg-slate-900 px-2 py-0.5 rounded text-tech-light-blue font-mono font-bold">TECH100</span> at checkout.</p>
+                </div>
+                <button onclick="switchTab('products')" class="bg-white text-dark-blue hover:bg-slate-100 font-bold px-6 py-3 rounded-xl whitespace-nowrap shadow-lg">
+                    Grab Offer <i class="fas fa-tag ml-1"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= PRODUCT LISTING & FILTERING SECTION ================= -->
+        <section id="section-products" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h1 class="text-2xl font-bold text-dark-blue mb-1">Catalog & Gadgets</h1>
+                <p class="text-slate-500 text-sm">Filter through our high-tech catalog by category, brand, rating, and price.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <!-- Filters Sidebar -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit space-y-6">
+                    <div class="flex justify-between items-center border-b pb-4">
+                        <h3 class="font-bold text-dark-blue text-lg"><i class="fas fa-filter text-tech-blue mr-2"></i> Filters</h3>
+                        <button onclick="resetFilters()" class="text-xs text-red-500 hover:underline font-semibold">Reset All</button>
+                    </div>
+
+                    <!-- Filter: Category -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Category</label>
+                        <select id="filter-category" onchange="applyFilters()" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-tech-blue focus:outline-none">
+                            <option value="all">All Categories</option>
+                            <option value="phones">Smartphones</option>
+                            <option value="laptops">Laptops & Tablets</option>
+                            <option value="audio">Audio & Headphones</option>
+                            <option value="wearables">Wearables & Watches</option>
+                            <option value="accessories">Accessories</option>
+                        </select>
+                    </div>
+
+                    <!-- Filter: Brand -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Brand</label>
+                        <select id="filter-brand" onchange="applyFilters()" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-tech-blue focus:outline-none">
+                            <option value="all">All Brands</option>
+                            <option value="Apple">Apple</option>
+                            <option value="Samsung">Samsung</option>
+                            <option value="Dell">Dell</option>
+                            <option value="Google">Google</option>
+                            <option value="Sony">Sony</option>
+                            <option value="Bose">Bose</option>
+                            <option value="Garmin">Garmin</option>
+                        </select>
+                    </div>
+
+                    <!-- Filter: Max Price -->
+                    <div>
+                        <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
+                            <span>Max Price</span>
+                            <span id="price-slider-value" class="text-tech-blue">$3000</span>
+                        </div>
+                        <input type="range" id="filter-price" min="50" max="3000" step="50" value="3000" oninput="updatePriceSlider(this.value); applyFilters();" class="w-full accent-tech-blue">
+                    </div>
+
+                    <!-- Filter: Minimum Rating -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Minimum Rating</label>
+                        <select id="filter-rating" onchange="applyFilters()" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-tech-blue focus:outline-none">
+                            <option value="0">All Ratings</option>
+                            <option value="4.5">4.5 Stars & Above</option>
+                            <option value="4.0">4.0 Stars & Above</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Product Grid & Sorting -->
+                <div class="lg:col-span-3 space-y-6">
+                    <!-- Top Bar: Results count & Sort -->
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <span class="text-sm font-semibold text-slate-600" id="products-count-label">Showing 0 products</span>
+                        <div class="flex items-center space-x-2">
+                            <label class="text-xs font-semibold text-slate-500">Sort By:</label>
+                            <select id="filter-sort" onchange="applyFilters()" class="border border-slate-300 rounded-lg text-xs p-2 focus:ring-2 focus:ring-tech-blue focus:outline-none">
+                                <option value="featured">Featured</option>
+                                <option value="price-asc">Price: Low to High</option>
+                                <option value="price-desc">Price: High to Low</option>
+                                <option value="rating-desc">Highest Rated</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Grid Output -->
+                    <div id="product-list-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                        <!-- Dynamically Generated Cards -->
+                    </div>
+
+                    <div id="no-products-msg" class="hidden text-center py-12 bg-white rounded-2xl border border-slate-200">
+                        <i class="fas fa-search-minus text-4xl text-slate-300 mb-3"></i>
+                        <h4 class="font-bold text-slate-700">No matching products found</h4>
+                        <p class="text-xs text-slate-400 mt-1">Try adjusting your filters or search query.</p>
+                        <button onclick="resetFilters()" class="mt-4 bg-tech-blue text-dark-blue text-xs font-bold px-4 py-2 rounded-lg">Clear Filters</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SHOPPING CART SECTION ================= -->
+        <section id="section-cart" class="hidden space-y-6">
+            <h1 class="text-2xl font-bold text-dark-blue"><i class="fas fa-shopping-bag text-tech-blue mr-2"></i> Your Shopping Cart</h1>
+
+            <div id="cart-content-layout" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Items List -->
+                <div class="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                    <div id="cart-items-container" class="divide-y divide-slate-100">
+                        <!-- Rendered Cart Items -->
+                    </div>
+                    <div id="cart-empty-view" class="text-center py-12 hidden">
+                        <i class="fas fa-shopping-cart text-5xl text-slate-300 mb-4"></i>
+                        <h3 class="text-lg font-bold text-slate-700">Your cart is empty</h3>
+                        <p class="text-xs text-slate-400 mt-1 mb-6">Looks like you haven't added any tech items yet.</p>
+                        <button onclick="switchTab('products')" class="bg-tech-blue text-dark-blue font-bold px-6 py-2.5 rounded-xl shadow">Explore Tech Shop</button>
+                    </div>
+                </div>
+
+                <!-- Order Summary Side Card -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 h-fit space-y-6">
+                    <h3 class="font-bold text-dark-blue text-lg border-b pb-3">Order Summary</h3>
+                    
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between text-slate-600">
+                            <span>Subtotal</span>
+                            <span id="summary-subtotal" class="font-semibold">$0.00</span>
+                        </div>
+                        <div class="flex justify-between text-slate-600">
+                            <span>Estimated Shipping</span>
+                            <span id="summary-shipping" class="font-semibold text-green-600">FREE</span>
+                        </div>
+                        <div class="flex justify-between text-slate-600">
+                            <span>Discount Promo</span>
+                            <span id="summary-discount" class="font-semibold text-red-500">-$0.00</span>
+                        </div>
+                        <div class="border-t pt-3 flex justify-between text-base font-bold text-dark-blue">
+                            <span>Total Amount</span>
+                            <span id="summary-total" class="text-tech-blue text-xl">$0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Promo Code Box -->
+                    <div class="pt-2">
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Have a promo code?</label>
+                        <div class="flex space-x-2">
+                            <input type="text" id="promo-input" placeholder="e.g. TECH100" class="uppercase flex-1 border border-slate-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-tech-blue focus:outline-none">
+                            <button onclick="applyPromoCode()" class="bg-dark-blue text-white hover:bg-slate-800 text-xs font-bold px-4 py-2 rounded-xl">Apply</button>
+                        </div>
+                    </div>
+
+                    <button onclick="switchTab('checkout')" id="checkout-btn" class="w-full bg-tech-blue hover:bg-cyan-400 text-dark-blue font-bold py-3.5 rounded-xl shadow-lg shadow-tech-blue/30 transition text-center block">
+                        Proceed to Checkout <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= CHECKOUT SECTION ================= -->
+        <section id="section-checkout" class="hidden space-y-6">
+            <h1 class="text-2xl font-bold text-dark-blue"><i class="fas fa-lock text-tech-blue mr-2"></i> Secure Checkout</h1>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Shipping & Payment Form -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Shipping Address Card -->
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
+                        <h3 class="font-bold text-dark-blue text-lg border-b pb-3"><i class="fas fa-truck text-tech-blue mr-2"></i> Shipping Address</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Full Name *</label>
+                                <input type="text" id="chk-name" value="Alex Johnson" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-tech-blue focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Email Address *</label>
+                                <input type="email" id="chk-email" value="alex.johnson@example.com" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-tech-blue focus:outline-none">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Street Address *</label>
+                                <input type="text" id="chk-address" value="742 Evergreen Terrace, Tech City" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-tech-blue focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">City / Region *</label>
+                                <input type="text" id="chk-city" value="San Francisco" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-tech-blue focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Postal Code *</label>
+                                <input type="text" id="chk-zip" value="94107" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-tech-blue focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method Simulation -->
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
+                        <h3 class="font-bold text-dark-blue text-lg border-b pb-3"><i class="fas fa-credit-card text-tech-blue mr-2"></i> Payment Gateway Simulation</h3>
+                        
+                        <div class="grid grid-cols-3 gap-3">
+                            <label class="border-2 border-tech-blue bg-blue-50/50 p-3 rounded-xl cursor-pointer flex flex-col items-center text-center">
+                                <input type="radio" name="pay-method" value="card" checked class="mb-2 accent-tech-blue">
+                                <i class="fas fa-credit-card text-slate-700 text-lg mb-1"></i>
+                                <span class="text-xs font-bold text-slate-800">Credit Card</span>
+                            </label>
+                            <label class="border p-3 rounded-xl cursor-pointer flex flex-col items-center text-center border-slate-200">
+                                <input type="radio" name="pay-method" value="upi" class="mb-2 accent-tech-blue">
+                                <i class="fas fa-qrcode text-slate-700 text-lg mb-1"></i>
+                                <span class="text-xs font-bold text-slate-800">UPI / QR</span>
+                            </label>
+                            <label class="border p-3 rounded-xl cursor-pointer flex flex-col items-center text-center border-slate-200">
+                                <input type="radio" name="pay-method" value="netbanking" class="mb-2 accent-tech-blue">
+                                <i class="fas fa-university text-slate-700 text-lg mb-1"></i>
+                                <span class="text-xs font-bold text-slate-800">NetBanking</span>
+                            </label>
+                        </div>
+
+                        <div class="space-y-3 pt-2">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Card Number</label>
+                                <input type="text" value="•••• •••• •••• 4242" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-tech-blue focus:outline-none font-mono">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 mb-1">Expiry Date</label>
+                                    <input type="text" value="12/28" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-tech-blue focus:outline-none font-mono">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 mb-1">CVV Security</label>
+                                    <input type="password" value="888" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-tech-blue focus:outline-none font-mono">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Final Review Card -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 h-fit space-y-4">
+                    <h3 class="font-bold text-dark-blue text-lg border-b pb-3">Final Order Details</h3>
+                    <div id="checkout-items-preview" class="space-y-3 max-h-60 overflow-y-auto text-xs pr-1 divide-y divide-slate-100">
+                        <!-- Items preview list -->
+                    </div>
+                    <div class="border-t pt-3 space-y-2 text-sm">
+                        <div class="flex justify-between font-bold text-dark-blue text-base">
+                            <span>Amount Payable</span>
+                            <span id="checkout-final-total" class="text-tech-blue">$0.00</span>
+                        </div>
+                    </div>
+                    <button onclick="placeOrder()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3.5 rounded-xl shadow-lg transition text-center block">
+                        <i class="fas fa-check-circle mr-1"></i> Place Order Now
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= WISHLIST SECTION ================= -->
+        <section id="section-wishlist" class="hidden space-y-6">
+            <h1 class="text-2xl font-bold text-dark-blue"><i class="fas fa-heart text-red-500 mr-2"></i> Saved Wishlist</h1>
+            <div id="wishlist-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Wishlist cards -->
+            </div>
+            <div id="wishlist-empty-msg" class="hidden text-center py-12 bg-white rounded-2xl border border-slate-200">
+                <i class="far fa-heart text-5xl text-slate-300 mb-3"></i>
+                <h3 class="font-bold text-slate-700 text-lg">Your Wishlist is Empty</h3>
+                <p class="text-xs text-slate-400 mt-1 mb-4">Click the heart icon on any gadget to save it for later.</p>
+                <button onclick="switchTab('products')" class="bg-tech-blue text-dark-blue text-xs font-bold px-5 py-2.5 rounded-xl">Browse Catalog</button>
+            </div>
+        </section>
+
+        <!-- ================= USER ACCOUNT SECTION ================= -->
+        <section id="section-account" class="hidden space-y-6">
+            <div id="account-logged-in-view" class="space-y-6">
+                <!-- Profile Header Card -->
+                <div class="bg-gradient-to-r from-dark-blue to-navy-dark p-6 rounded-2xl text-white shadow-lg flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                    <div class="w-20 h-20 rounded-full bg-tech-blue text-dark-blue font-bold text-2xl flex items-center justify-center border-4 border-white/20">
+                        <i class="fas fa-user-astronaut"></i>
+                    </div>
+                    <div class="text-center sm:text-left flex-1">
+                        <h2 class="text-2xl font-bold" id="profile-name">Alex Johnson</h2>
+                        <p class="text-slate-300 text-xs" id="profile-email">alex.johnson@example.com</p>
+                        <span class="inline-block mt-2 bg-tech-blue/20 text-tech-light-blue border border-tech-blue/30 text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full">VIP Member</span>
+                    </div>
+                    <button onclick="simulatedLogout()" class="bg-red-500/20 hover:bg-red-500 text-red-200 hover:text-white border border-red-500/30 text-xs font-bold px-4 py-2 rounded-xl transition">
+                        Log Out
+                    </button>
+                </div>
+
+                <!-- Order History -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-dark-blue text-lg mb-4"><i class="fas fa-history text-tech-blue mr-2"></i> Recent Order History</h3>
+                    <div id="order-history-list" class="space-y-4">
+                        <!-- Order History Generated Dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Login / Register Form (When not logged in) -->
+            <div id="account-login-view" class="hidden max-w-md mx-auto bg-white p-8 rounded-2xl shadow-xl border border-slate-200 space-y-6">
+                <div class="text-center">
+                    <div class="w-12 h-12 bg-tech-blue/20 text-tech-blue rounded-full flex items-center justify-center mx-auto mb-2 text-xl font-bold">
+                        <i class="fas fa-user-lock"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-dark-blue">User Authentication</h2>
+                    <p class="text-xs text-slate-500 mt-1">Sign in to track orders and save tech items</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Email Address</label>
+                        <input type="email" id="login-email-input" value="alex.johnson@example.com" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-tech-blue focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Password</label>
+                        <input type="password" id="login-pass-input" value="password123" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-tech-blue focus:outline-none">
+                    </div>
+                    <button onclick="simulatedLogin()" class="w-full bg-tech-blue text-dark-blue font-bold py-3 rounded-xl shadow-md hover:bg-cyan-400 transition">
+                        Sign In / Register
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= ABOUT US SECTION ================= -->
+        <section id="section-about" class="hidden space-y-8">
+            <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-200 text-center max-w-3xl mx-auto space-y-4">
+                <span class="bg-blue-100 text-dark-blue text-xs font-bold px-3 py-1 rounded-full uppercase">About TechWorld</span>
+                <h1 class="text-3xl font-extrabold text-dark-blue">Empowering Your Digital Lifestyle</h1>
+                <p class="text-slate-600 text-sm leading-relaxed">
+                    TechWorld is a leading e-commerce destination for premium consumer electronics, flagship smartphones, productivity laptops, and smart home accessories. Built with passion as part of the Data Alcott Systems Web Development initiative.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 text-center">
+                    <div class="w-12 h-12 bg-blue-50 text-tech-blue rounded-xl flex items-center justify-center text-2xl mx-auto mb-4">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <h3 class="font-bold text-dark-blue text-lg">Authentic Products</h3>
+                    <p class="text-xs text-slate-500 mt-2">100% genuine products sourced directly from verified international manufacturers.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 text-center">
+                    <div class="w-12 h-12 bg-blue-50 text-tech-blue rounded-xl flex items-center justify-center text-2xl mx-auto mb-4">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3 class="font-bold text-dark-blue text-lg">24/7 Tech Support</h3>
+                    <p class="text-xs text-slate-500 mt-2">Expert engineers ready to assist with device troubleshooting and setup.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 text-center">
+                    <div class="w-12 h-12 bg-blue-50 text-tech-blue rounded-xl flex items-center justify-center text-2xl mx-auto mb-4">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="font-bold text-dark-blue text-lg">Secure Shopping</h3>
+                    <p class="text-xs text-slate-500 mt-2">End-to-end encrypted checkouts and hassle-free 30-day return policies.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= CONTACT US SECTION ================= -->
+        <section id="section-contact" class="hidden space-y-8">
+            <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-200">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-dark-blue">Get in Touch</h2>
+                            <p class="text-sm text-slate-500 mt-1">Have a question regarding tech specs or your order? Write to us.</p>
+                        </div>
+                        <div class="space-y-4 text-sm">
+                            <div class="flex items-center space-x-3 text-slate-700">
+                                <i class="fas fa-map-marker-alt text-tech-blue text-lg w-6"></i>
+                                <span>TechWorld Plaza, Innovation Way, CA 94107</span>
+                            </div>
+                            <div class="flex items-center space-x-3 text-slate-700">
+                                <i class="fas fa-phone-alt text-tech-blue text-lg w-6"></i>
+                                <span>+1 (800) 555-TECH-WORLD</span>
+                            </div>
+                            <div class="flex items-center space-x-3 text-slate-700">
+                                <i class="fas fa-envelope text-tech-blue text-lg w-6"></i>
+                                <span>support@techworld-gadgets.com</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form onsubmit="handleContactSubmit(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Your Name</label>
+                            <input type="text" required class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-tech-blue focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Your Email</label>
+                            <input type="email" required class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-tech-blue focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Message</label>
+                            <textarea rows="4" required class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-tech-blue focus:outline-none"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-tech-blue text-dark-blue font-bold py-3 rounded-xl shadow hover:bg-cyan-400 transition">
+                            Send Message <i class="fas fa-paper-plane ml-1"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Product Detail Modal -->
+    <div id="product-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 relative shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto">
+            <button onclick="closeProductModal()" class="absolute top-4 right-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full w-9 h-9 flex items-center justify-center font-bold">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <div class="bg-slate-50 p-4 rounded-2xl flex items-center justify-center">
+                    <img id="modal-img" src="" alt="" class="max-h-64 object-contain rounded-xl">
+                </div>
+                <div class="space-y-4">
+                    <span id="modal-category" class="text-xs uppercase font-bold text-tech-blue tracking-wider"></span>
+                    <h2 id="modal-title" class="text-2xl font-bold text-dark-blue"></h2>
+                    <div class="flex items-center space-x-2">
+                        <div id="modal-rating" class="text-amber-400 text-sm"></div>
+                        <span id="modal-rating-num" class="text-xs text-slate-500 font-semibold"></span>
+                    </div>
+                    <div class="text-2xl font-extrabold text-dark-blue" id="modal-price"></div>
+                    <p id="modal-specs" class="text-xs text-slate-600 bg-slate-100 p-3 rounded-xl font-mono"></p>
+                    <div class="text-xs font-semibold text-green-600 flex items-center gap-1">
+                        <i class="fas fa-check-circle"></i> In Stock & Ready to Ship
+                    </div>
+                    <div class="flex space-x-3 pt-2">
+                        <button id="modal-add-cart-btn" class="flex-1 bg-tech-blue hover:bg-cyan-400 text-dark-blue font-bold py-3 rounded-xl shadow transition">
+                            <i class="fas fa-cart-plus mr-1"></i> Add to Cart
+                        </button>
+                        <button id="modal-wishlist-btn" class="p-3 border border-slate-300 hover:border-red-400 rounded-xl text-slate-600 transition">
+                            <i class="far fa-heart text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Tracking Modal -->
+    <div id="order-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center space-y-5 shadow-2xl">
+            <div class="w-16 h-16 bg-green-100 text-green-500 rounded-full flex items-center justify-center text-3xl mx-auto">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-dark-blue">Order Placed Successfully!</h2>
+            <p class="text-xs text-slate-500">Thank you for shopping with TechWorld. Your order is being processed for dispatch.</p>
+            
+            <div class="bg-slate-50 p-4 rounded-xl text-left text-xs space-y-2 border border-slate-200">
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Order ID:</span>
+                    <span id="receipt-order-id" class="font-bold font-mono text-dark-blue"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Total Paid:</span>
+                    <span id="receipt-total" class="font-bold text-tech-blue"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Est. Delivery:</span>
+                    <span class="font-bold text-slate-700">2-3 Business Days</span>
+                </div>
+            </div>
+
+            <button onclick="closeOrderModal()" class="w-full bg-tech-blue text-dark-blue font-bold py-3 rounded-xl shadow">
+                Back to Store
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark-blue text-slate-400 pt-12 pb-6 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-2 text-white font-bold text-xl">
+                        <i class="fas fa-laptop-code text-tech-blue"></i>
+                        <span>Tech<span class="text-tech-blue">World</span></span>
+                    </div>
+                    <p class="text-xs leading-relaxed">Your premier destination for high-performance laptops, smartphones, and smart tech accessories.</p>
+                </div>
+                <div>
+                    <h4 class="text-white text-sm font-bold mb-3">Quick Navigation</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><button onclick="switchTab('home')" class="hover:text-tech-blue">Home</button></li>
+                        <li><button onclick="switchTab('products')" class="hover:text-tech-blue">Products Catalog</button></li>
+                        <li><button onclick="switchTab('cart')" class="hover:text-tech-blue">Shopping Cart</button></li>
+                        <li><button onclick="switchTab('about')" class="hover:text-tech-blue">About Us</button></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white text-sm font-bold mb-3">Categories</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><button onclick="filterCategoryAndNav('phones')" class="hover:text-tech-blue">Smartphones</button></li>
+                        <li><button onclick="filterCategoryAndNav('laptops')" class="hover:text-tech-blue">Laptops & Tablets</button></li>
+                        <li><button onclick="filterCategoryAndNav('audio')" class="hover:text-tech-blue">Audio & Earbuds</button></li>
+                        <li><button onclick="filterCategoryAndNav('wearables')" class="hover:text-tech-blue">Smartwatches</button></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white text-sm font-bold mb-3">Internship Project</h4>
+                    <p class="text-xs text-slate-400 mb-2">Data Alcott Systems Internship Task WD-EC-003.</p>
+                    <span class="text-[10px] bg-slate-800 text-tech-blue px-2.5 py-1 rounded font-mono">Status: Completed</span>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 pt-6 text-center text-xs text-slate-500">
+                &copy; 2026 TechWorld Electronics. Built with HTML5, Tailwind CSS, & JavaScript.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ================= PRODUCT DATA STORE =================
+        const productsData = [
+            { id: 1, name: "iPhone 15 Pro", brand: "Apple", price: 999.99, category: "phones", specs: "6.1-inch OLED, A17 Pro, 256GB Titanium", rating: 4.9, image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=500&auto=format&fit=crop&q=80" },
+            { id: 2, name: "MacBook Pro 16", brand: "Apple", price: 2499.99, category: "laptops", specs: "M3 Max, 36GB RAM, 1TB SSD, Liquid Retina", rating: 4.8, image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&auto=format&fit=crop&q=80" },
+            { id: 3, name: "Samsung Galaxy S24 Ultra", brand: "Samsung", price: 1199.99, category: "phones", specs: "6.8-inch Dynamic AMOLED, Snapdragon 8 Gen 3, 256GB", rating: 4.7, image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=500&auto=format&fit=crop&q=80" },
+            { id: 4, name: "Dell XPS 15 Laptop", brand: "Dell", price: 1799.99, category: "laptops", specs: "Intel i9, 32GB RAM, RTX 4060, 4K OLED", rating: 4.6, image: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500&auto=format&fit=crop&q=80" },
+            { id: 5, name: "Sony WH-1000XM5 Headphones", brand: "Sony", price: 399.99, category: "audio", specs: "Industry Leading Noise Canceling, 30hr Battery", rating: 4.9, image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=80" },
+            { id: 6, name: "Apple Watch Ultra 2", brand: "Apple", price: 799.99, category: "wearables", specs: "49mm Titanium, GPS + Cellular, Water Resistant 100m", rating: 4.8, image: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=500&auto=format&fit=crop&q=80" },
+            { id: 7, name: "Google Pixel 8 Pro", brand: "Google", price: 899.99, category: "phones", specs: "6.7-inch OLED, Google Tensor G3, AI Camera", rating: 4.5, image: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=500&auto=format&fit=crop&q=80" },
+            { id: 8, name: "HP Spectre x360 2-in-1", brand: "Dell", price: 1499.99, category: "laptops", specs: "Touchscreen, Intel Evo Core i7, 16GB RAM", rating: 4.5, image: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=500&auto=format&fit=crop&q=80" },
+            { id: 9, name: "Bose QuietComfort Ultra", brand: "Bose", price: 429.99, category: "audio", specs: "Spatial Audio, Immersive Sound, Quiet Mode", rating: 4.7, image: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=500&auto=format&fit=crop&q=80" },
+            { id: 10, name: "Garmin Venu 3 Smartwatch", brand: "Garmin", price: 449.99, category: "wearables", specs: "AMOLED Display, Health Monitoring, 14-day Battery", rating: 4.6, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=80" },
+            { id: 11, name: "Anker 24,000mAh Power Bank", brand: "Anker", price: 149.99, category: "accessories", specs: "140W Fast Charging, Smart Digital Display", rating: 4.8, image: "https://images.unsplash.com/photo-1609592424083-d02c813be2a9?w=500&auto=format&fit=crop&q=80" },
+            { id: 12, name: "Apple AirPods Pro 2", brand: "Apple", price: 249.99, category: "audio", specs: "USB-C Case, Active Noise Cancellation, MagSafe", rating: 4.9, image: "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=500&auto=format&fit=crop&q=80" }
+        ];
+
+        // ================= APP STATE MANAGEMENT =================
+        let cart = JSON.parse(localStorage.getItem('techworld_cart')) || [];
+        let wishlist = JSON.parse(localStorage.getItem('techworld_wishlist')) || [];
+        let orderHistory = JSON.parse(localStorage.getItem('techworld_orders')) || [
+            { id: "ORD-98214", date: "2026-09-15", total: 1399.98, status: "Delivered", itemsCount: 2 }
+        ];
+        let currentUser = JSON.parse(localStorage.getItem('techworld_user')) || { name: "Alex Johnson", email: "alex.johnson@example.com", loggedIn: true };
+        let appliedDiscount = 0;
+
+        window.onload = function() {
+            renderFeaturedProducts();
+            renderProductGrid(productsData);
+            updateCartBadge();
+            updateWishlistBadge();
+            renderCartView();
+            renderWishlistGrid();
+            renderOrderHistory();
+            updateAuthUI();
+        };
+
+        // Navigation Tab Switcher
+        function switchTab(tabId) {
+            const sections = ['home', 'products', 'cart', 'checkout', 'wishlist', 'account', 'about', 'contact'];
+            sections.forEach(sec => {
+                const el = document.getElementById(`section-${sec}`);
+                if (el) el.classList.add('hidden');
+            });
+
+            const activeSection = document.getElementById(`section-${tabId}`);
+            if (activeSection) {
+                activeSection.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            if (tabId === 'cart') renderCartView();
+            if (tabId === 'checkout') renderCheckoutPreview();
+            if (tabId === 'wishlist') renderWishlistGrid();
+        }
+
+        function toggleMobileMenu() {
+            const drawer = document.getElementById('mobile-drawer');
+            drawer.classList.toggle('hidden');
+        }
+
+        // Search & Filter Trigger
+        function handleSearchInput(event) {
+            if (event.key === 'Enter') {
+                executeSearch(event.target.id);
+            }
+        }
+
+        function executeSearch(inputId) {
+            const query = document.getElementById(inputId).value.trim().toLowerCase();
+            switchTab('products');
+            if (!query) {
+                renderProductGrid(productsData);
+                return;
+            }
+            const filtered = productsData.filter(p => 
+                p.name.toLowerCase().includes(query) || 
+                p.brand.toLowerCase().includes(query) || 
+                p.specs.toLowerCase().includes(query)
+            );
+            renderProductGrid(filtered);
+        }
+
+        function filterCategoryAndNav(catName) {
+            switchTab('products');
+            document.getElementById('filter-category').value = catName;
+            applyFilters();
+        }
+
+        function updatePriceSlider(val) {
+            document.getElementById('price-slider-value').innerText = `$${val}`;
+        }
+
+        function applyFilters() {
+            const category = document.getElementById('filter-category').value;
+            const brand = document.getElementById('filter-brand').value;
+            const maxPrice = parseFloat(document.getElementById('filter-price').value);
+            const minRating = parseFloat(document.getElementById('filter-rating').value);
+            const sortOption = document.getElementById('filter-sort').value;
+
+            let result = productsData.filter(p => {
+                const matchesCat = category === 'all' || p.category === category;
+                const matchesBrand = brand === 'all' || p.brand === brand;
+                const matchesPrice = p.price <= maxPrice;
+                const matchesRating = p.rating >= minRating;
+                return matchesCat && matchesBrand && matchesPrice && matchesRating;
+            });
+
+            // Sorting logic
+            if (sortOption === 'price-asc') result.sort((a, b) => a.price - b.price);
+            if (sortOption === 'price-desc') result.sort((a, b) => b.price - a.price);
+            if (sortOption === 'rating-desc') result.sort((a, b) => b.rating - a.rating);
+
+            renderProductGrid(result);
+        }
+
+        function resetFilters() {
+            document.getElementById('filter-category').value = 'all';
+            document.getElementById('filter-brand').value = 'all';
+            document.getElementById('filter-price').value = '3000';
+            document.getElementById('price-slider-value').innerText = '$3000';
+            document.getElementById('filter-rating').value = '0';
+            document.getElementById('filter-sort').value = 'featured';
+            renderProductGrid(productsData);
+        }
+
+        // Render Featured Home Grid
+        function renderFeaturedProducts() {
+            const container = document.getElementById('home-featured-grid');
+            const featured = productsData.slice(0, 4);
+            container.innerHTML = featured.map(p => createProductCardHTML(p)).join('');
+        }
+
+        // Render Product Catalog Grid
+        function renderProductGrid(items) {
+            const container = document.getElementById('product-list-grid');
+            const noMsg = document.getElementById('no-products-msg');
+            const countLabel = document.getElementById('products-count-label');
+
+            countLabel.innerText = `Showing ${items.length} product(s)`;
+
+            if (items.length === 0) {
+                container.innerHTML = '';
+                noMsg.classList.remove('hidden');
+            } else {
+                noMsg.classList.add('hidden');
+                container.innerHTML = items.map(p => createProductCardHTML(p)).join('');
+            }
+        }
+
+        // Helper: Generate Card HTML
+        function createProductCardHTML(product) {
+            const isWish = wishlist.includes(product.id);
+            return `
+                <div class="product-card bg-white rounded-2xl p-5 shadow-sm hover:shadow-xl border border-slate-200 hover:border-tech-blue/50 transition duration-300 flex flex-col justify-between">
+                    <div>
+                        <div class="relative bg-slate-50 rounded-xl p-4 mb-4 flex items-center justify-center h-48 overflow-hidden">
+                            <img src="${product.image}" alt="${product.name}" class="product-img max-h-40 object-contain transition duration-500">
+                            <button onclick="toggleWishlist(${product.id})" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/80 backdrop-blur shadow flex items-center justify-center text-slate-400 hover:text-red-500 transition">
+                                <i class="${isWish ? 'fas text-red-500' : 'far'} fa-heart"></i>
+                            </button>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-tech-blue bg-blue-50 px-2.5 py-1 rounded-md">${product.brand}</span>
+                        <h3 class="font-bold text-slate-800 text-base mt-2 line-clamp-1 cursor-pointer hover:text-tech-blue" onclick="openProductModal(${product.id})">${product.name}</h3>
+                        <p class="text-xs text-slate-400 mt-1 line-clamp-2">${product.specs}</p>
+                        <div class="flex items-center space-x-1 mt-2 text-amber-400 text-xs">
+                            <i class="fas fa-star"></i>
+                            <span class="text-slate-700 font-semibold">${product.rating}</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <span class="text-lg font-extrabold text-dark-blue">$${product.price.toFixed(2)}</span>
+                        <button onclick="addToCart(${product.id})" class="bg-dark-blue hover:bg-tech-blue hover:text-dark-blue text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow">
+                            <i class="fas fa-cart-plus mr-1"></i> Add
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function addToCart(productId) {
+            const existing = cart.find(item => item.id === productId);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({ id: productId, quantity: 1 });
+            }
+            saveCartState();
+            showToast("Item added to your cart!");
+        }
+
+        function updateCartQuantity(productId, delta) {
+            const item = cart.find(i => i.id === productId);
+            if (item) {
+                item.quantity += delta;
+                if (item.quantity <= 0) {
+                    cart = cart.filter(i => i.id !== productId);
+                }
+                saveCartState();
+                renderCartView();
+            }
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(i => i.id !== productId);
+            saveCartState();
+            renderCartView();
+            showToast("Item removed from cart");
+        }
+
+        function saveCartState() {
+            localStorage.setItem('techworld_cart', JSON.stringify(cart));
+            updateCartBadge();
+        }
+
+        function updateCartBadge() {
+            const count = cart.reduce((acc, item) => acc + item.quantity, 0);
+            document.getElementById('cart-badge').innerText = count;
+
+            let subtotal = 0;
+            cart.forEach(ci => {
+                const p = productsData.find(x => x.id === ci.id);
+                if (p) subtotal += p.price * ci.quantity;
+            });
+            document.getElementById('cart-header-subtotal').innerText = `$${subtotal.toFixed(2)}`;
+        }
+
+        function renderCartView() {
+            const container = document.getElementById('cart-items-container');
+            const emptyView = document.getElementById('cart-empty-view');
+
+            if (cart.length === 0) {
+                container.innerHTML = '';
+                emptyView.classList.remove('hidden');
+                updateCartTotals(0);
+                return;
+            }
+
+            emptyView.classList.add('hidden');
+            let subtotal = 0;
+
+            container.innerHTML = cart.map(ci => {
+                const product = productsData.find(p => p.id === ci.id);
+                if (!product) return '';
+                const itemTotal = product.price * ci.quantity;
+                subtotal += itemTotal;
+
+                return `
+                    <div class="py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center space-x-4 w-full sm:w-auto">
+                            <img src="${product.image}" alt="${product.name}" class="w-16 h-16 object-contain rounded-xl bg-slate-50 p-2 border">
+                            <div>
+                                <h4 class="font-bold text-dark-blue text-sm">${product.name}</h4>
+                                <span class="text-xs text-slate-400">$${product.price.toFixed(2)} each</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between w-full sm:w-auto space-x-6">
+                            <div class="flex items-center border border-slate-300 rounded-xl overflow-hidden">
+                                <button onclick="updateCartQuantity(${product.id}, -1)" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold">-</button>
+                                <span class="px-3 py-1 text-xs font-bold text-slate-800">${ci.quantity}</span>
+                                <button onclick="updateCartQuantity(${product.id}, 1)" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold">+</button>
+                            </div>
+                            <span class="font-bold text-dark-blue text-sm">$${itemTotal.toFixed(2)}</span>
+                            <button onclick="removeFromCart(${product.id})" class="text-red-400 hover:text-red-600 text-sm">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            updateCartTotals(subtotal);
+        }
+
+        function updateCartTotals(subtotal) {
+            const finalTotal = Math.max(0, subtotal - appliedDiscount);
+            document.getElementById('summary-subtotal').innerText = `$${subtotal.toFixed(2)}`;
+            document.getElementById('summary-discount').innerText = `-$${appliedDiscount.toFixed(2)}`;
+            document.getElementById('summary-total').innerText = `$${finalTotal.toFixed(2)}`;
+        }
+
+        function applyPromoCode() {
+            const code = document.getElementById('promo-input').value.trim().toUpperCase();
+            if (code === 'TECH100') {
+                appliedDiscount = 100;
+                showToast("Promo applied! $100 Discount.");
+            } else {
+                showToast("Invalid Promo Code");
+            }
+            renderCartView();
+        }
+
+        // Toggle Wishlist
+        function toggleWishlist(productId) {
+            if (wishlist.includes(productId)) {
+                wishlist = wishlist.filter(id => id !== productId);
+                showToast("Removed from Wishlist");
+            } else {
+                wishlist.push(productId);
+                showToast("Saved to Wishlist!");
+            }
+            localStorage.setItem('techworld_wishlist', JSON.stringify(wishlist));
+            updateWishlistBadge();
+            renderProductGrid(productsData);
+            renderWishlistGrid();
+        }
+
+        function updateWishlistBadge() {
+            document.getElementById('wishlist-badge').innerText = wishlist.length;
+        }
+
+        function renderWishlistGrid() {
+            const container = document.getElementById('wishlist-grid');
+            const emptyMsg = document.getElementById('wishlist-empty-msg');
+
+            if (wishlist.length === 0) {
+                container.innerHTML = '';
+                emptyMsg.classList.remove('hidden');
+                return;
+            }
+
+            emptyMsg.classList.add('hidden');
+            const items = productsData.filter(p => wishlist.includes(p.id));
+            container.innerHTML = items.map(p => createProductCardHTML(p)).join('');
+        }
+
+        function openProductModal(productId) {
+            const p = productsData.find(item => item.id === productId);
+            if (!p) return;
+
+            document.getElementById('modal-img').src = p.image;
+            document.getElementById('modal-title').innerText = p.name;
+            document.getElementById('modal-category').innerText = `${p.brand} • ${p.category}`;
+            document.getElementById('modal-price').innerText = `$${p.price.toFixed(2)}`;
+            document.getElementById('modal-specs').innerText = `Specs: ${p.specs}`;
+            document.getElementById('modal-rating-num').innerText = `(${p.rating} Stars Rating)`;
+            
+            // Rating Stars
+            document.getElementById('modal-rating').innerHTML = '<i class="fas fa-star"></i>'.repeat(Math.floor(p.rating));
+
+            document.getElementById('modal-add-cart-btn').onclick = () => {
+                addToCart(p.id);
+                closeProductModal();
+            };
+
+            document.getElementById('modal-wishlist-btn').onclick = () => {
+                toggleWishlist(p.id);
+            };
+
+            document.getElementById('product-modal').classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.add('hidden');
+        }
+
+        function renderCheckoutPreview() {
+            const container = document.getElementById('checkout-items-preview');
+            let total = 0;
+
+            container.innerHTML = cart.map(ci => {
+                const p = productsData.find(x => x.id === ci.id);
+                if (!p) return '';
+                const itemTot = p.price * ci.quantity;
+                total += itemTot;
+                return `
+                    <div class="flex justify-between items-center py-1">
+                        <span>${p.name} (x${ci.quantity})</span>
+                        <span class="font-bold">$${itemTot.toFixed(2)}</span>
+                    </div>
+                `;
+            }).join('');
+
+            const finalAmt = Math.max(0, total - appliedDiscount);
+            document.getElementById('checkout-final-total').innerText = `$${finalAmt.toFixed(2)}`;
+        }
+
+        function placeOrder() {
+            if (cart.length === 0) {
+                showToast("Your cart is empty!");
+                return;
+            }
+
+            const orderId = "ORD-" + Math.floor(10000 + Math.random() * 90000);
+            let subtotal = cart.reduce((acc, item) => {
+                const p = productsData.find(x => x.id === item.id);
+                return acc + (p ? p.price * item.quantity : 0);
+            }, 0);
+            const total = Math.max(0, subtotal - appliedDiscount);
+
+            const newOrder = {
+                id: orderId,
+                date: new Date().toISOString().split('T')[0],
+                total: total,
+                status: "Processing",
+                itemsCount: cart.length
+            };
+
+            orderHistory.unshift(newOrder);
+            localStorage.setItem('techworld_orders', JSON.stringify(orderHistory));
+
+            // Clear Cart
+            cart = [];
+            appliedDiscount = 0;
+            saveCartState();
+
+            // Show Receipt Modal
+            document.getElementById('receipt-order-id').innerText = orderId;
+            document.getElementById('receipt-total').innerText = `$${total.toFixed(2)}`;
+            document.getElementById('order-modal').classList.remove('hidden');
+
+            renderOrderHistory();
+        }
+
+        function closeOrderModal() {
+            document.getElementById('order-modal').classList.add('hidden');
+            switchTab('account');
+        }
+
+        // User Profile & Auth
+        function renderOrderHistory() {
+            const container = document.getElementById('order-history-list');
+            if (orderHistory.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400">No past orders found.</p>';
+                return;
+            }
+
+            container.innerHTML = orderHistory.map(ord => `
+                <div class="border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row justify-between items-center text-xs space-y-2 sm:space-y-0">
+                    <div>
+                        <span class="font-bold text-dark-blue font-mono">${ord.id}</span>
+                        <span class="text-slate-400 ml-2">${ord.date}</span>
+                    </div>
+                    <div>
+                        <span class="bg-blue-50 text-tech-blue font-bold px-2 py-1 rounded">${ord.itemsCount} Item(s)</span>
+                        <span class="font-bold text-slate-800 ml-2">$${ord.total.toFixed(2)}</span>
+                    </div>
+                    <span class="text-xs font-bold ${ord.status === 'Delivered' ? 'text-green-500' : 'text-amber-500'}">${ord.status}</span>
+                </div>
+            `).join('');
+        }
+
+        function simulatedLogin() {
+            const email = document.getElementById('login-email-input').value;
+            currentUser = { name: email.split('@')[0], email: email, loggedIn: true };
+            localStorage.setItem('techworld_user', JSON.stringify(currentUser));
+            updateAuthUI();
+            showToast("Welcome back!");
+        }
+
+        function simulatedLogout() {
+            currentUser = { name: "Guest User", email: "", loggedIn: false };
+            localStorage.setItem('techworld_user', JSON.stringify(currentUser));
+            updateAuthUI();
+            showToast("Logged out successfully");
+        }
+
+        function updateAuthUI() {
+            if (currentUser.loggedIn) {
+                document.getElementById('top-user-name').innerText = currentUser.name;
+                document.getElementById('profile-name').innerText = currentUser.name;
+                document.getElementById('profile-email').innerText = currentUser.email;
+                document.getElementById('account-logged-in-view').classList.remove('hidden');
+                document.getElementById('account-login-view').classList.add('hidden');
+            } else {
+                document.getElementById('top-user-name').innerText = "Sign In";
+                document.getElementById('account-logged-in-view').classList.add('hidden');
+                document.getElementById('account-login-view').classList.remove('hidden');
+            }
+        }
+
+        function handleContactSubmit(e) {
+            e.preventDefault();
+            showToast("Message sent successfully!");
+            e.target.reset();
+        }
+
+        // Toast Notification System
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
